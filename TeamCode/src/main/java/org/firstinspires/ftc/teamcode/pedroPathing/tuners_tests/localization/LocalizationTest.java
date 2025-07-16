@@ -12,6 +12,7 @@ import static com.pedropathing.follower.FollowerConstants.rightRearMotorDirectio
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.localization.Pose;
 import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -52,7 +53,7 @@ public class LocalizationTest extends OpMode {
     private DcMotorEx rightFront;
     private DcMotorEx rightRear;
     private List<DcMotorEx> motors;
-
+    private Pose updaterPose;
     /**
      * This initializes the PoseUpdater, the mecanum drive motors, and the FTC Dashboard telemetry.
      */
@@ -60,6 +61,8 @@ public class LocalizationTest extends OpMode {
     public void init() {
         Constants.setConstants(FConstants.class, LConstants.class);
         poseUpdater = new PoseUpdater(hardwareMap, FConstants.class, LConstants.class);
+        // Use line below to set starting pose for the pose updater
+//        poseUpdater.setStartingPose(new Pose(0, 0, Math.toRadians(0)));
 
         dashboardPoseTracker = new DashboardPoseTracker(poseUpdater);
 
@@ -88,8 +91,9 @@ public class LocalizationTest extends OpMode {
         telemetryA.addLine("This will print your robot's position to telemetry while "
                 + "allowing robot control through a basic mecanum drive on gamepad 1.");
         telemetryA.update();
+        updaterPose = poseUpdater.getPose();
 
-        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
+        Drawing.drawRobot(updaterPose.getAsFTCStandardCoordinates(), "#4CAF50");
         Drawing.sendPacket();
     }
 
@@ -125,9 +129,10 @@ public class LocalizationTest extends OpMode {
         telemetryA.addData("heading", poseUpdater.getPose().getHeading());
         telemetryA.addData("total heading", poseUpdater.getTotalHeading());
         telemetryA.update();
+        updaterPose = poseUpdater.getPose();
 
         Drawing.drawPoseHistory(dashboardPoseTracker, "#4CAF50");
-        Drawing.drawRobot(poseUpdater.getPose(), "#4CAF50");
+        Drawing.drawRobot(updaterPose.getAsFTCStandardCoordinates(), "#4CAF50");
         Drawing.sendPacket();
     }
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedroPathing.examples;
+package pedroPathing.examples;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -7,14 +7,13 @@ import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
-import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
+import pedroPathing.constants.FConstants;
+import pedroPathing.constants.LConstants;
 
 
 /**
@@ -25,11 +24,12 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
  * @author Samarth Mahapatra - 1002 CircuitRunners Robotics Surge
  * @version 1.0, 12/30/2024
  */
-@Autonomous(name = "Triangle", group = "Examples")
-public class Triangle extends OpMode {
+@Autonomous(name = "Matt-Pedropath", group = "Examples")
+public class MattExample extends OpMode {
     private Follower follower;
 
     private final Pose startPose = new Pose(0,0, Math.toRadians(0));
+
     private final Pose interPose = new Pose(24, -24, Math.toRadians(90));
     private final Pose interPose2 = new Pose(24, 0, Math.toRadians(0));
     private final Pose endPose = new Pose(24, 24, Math.toRadians(45));
@@ -46,9 +46,7 @@ public class Triangle extends OpMode {
     public void loop() {
         follower.update();
 
-//        if (follower.atParametricEnd()) {
-        follower.followPath(triangle, true);
-        //}
+//
 
         follower.telemetryDebug(telemetryA);
     }
@@ -59,26 +57,29 @@ public class Triangle extends OpMode {
      */
     @Override
     public void init() {
+        startPose.setCoordinateSystem(true);
+        interPose2.setCoordinateSystem(true);
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
 
         triangle = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(startPose), new Point(interPose)))
-                .setLinearHeadingInterpolation(startPose.getHeading(), interPose.getHeading())
+                .addPath(new BezierLine(new Point(startPose), new Point(interPose2)))
+                .setLinearHeadingInterpolation(startPose.getHeading(), interPose2.getHeading())
 
-                .addPath(new BezierLine(new Point(interPose), new Point(endPose)))
-                .setLinearHeadingInterpolation(interPose.getHeading(), endPose.getHeading())
-                .addPath(new BezierLine(new Point(endPose), new Point(startPose)))
-                .setLinearHeadingInterpolation(endPose.getHeading(), startPose.getHeading())
+//                .addPath(new BezierLine(new Point(interPose), new Point(endPose)))
+//                .setLinearHeadingInterpolation(interPose.getHeading(), endPose.getHeading())
+//                .addPath(new BezierLine(new Point(endPose), new Point(startPose)))
+//                .setLinearHeadingInterpolation(endPose.getHeading(), startPose.getHeading())
                 .build();
 
-        follower.followPath(triangle);
+        follower.followPath(triangle, true);
 
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetryA.addLine("This will run in a roughly triangular shape,"
                 + "starting on the bottom-middle point. So, make sure you have enough "
                 + "space to the left, front, and right to run the OpMode.");
         telemetryA.update();
+
     }
 
 }
