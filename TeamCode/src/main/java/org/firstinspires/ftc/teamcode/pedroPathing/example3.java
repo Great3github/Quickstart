@@ -24,7 +24,8 @@ public class example3 extends OpMode {
 
 
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
-        follower.setStartingPose(new Pose(10, 60, Math.toRadians(0)).getAsFTCStandardCoordinates());
+        follower.setStartingPose(new Pose(12.5, 85, Math.toRadians(0)).getAsFTCStandardCoordinates());
+        // ^^ remember to set starting pose ^^
         path = new MattPath().GeneratedPath2();
         follower.followPath(path, true);
     }
