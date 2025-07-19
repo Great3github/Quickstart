@@ -70,10 +70,10 @@ public class example3 extends OpMode {
                     .addPath(
                             // Line 1
                             new BezierCurve(
-                                    new Point(12.500, 85.000, Point.CARTESIAN),
-                                    new Point(0.500, 60.000, Point.CARTESIAN),
-                                    new Point(48.500, 60.000, Point.CARTESIAN),
-                                    new Point(35.000, 85.000, Point.CARTESIAN)
+                                    new Point(new Pose(12.5, 85, true)),
+                                    new Point(new Pose(0.5, 60, true)),
+                                    new Point(new Pose(48.5, 60, true)),
+                                    new Point(new Pose(35, 85, true))
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
