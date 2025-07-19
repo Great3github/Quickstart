@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.FConstants;
 import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 
 @Autonomous (name="Mattp2", group="Examples")
-public class example2 extends OpMode {
+public class example3 extends OpMode {
     PathChain path = new MattPath().followerPath();
     HardwareMap hardwareMap;
     Follower follower;
