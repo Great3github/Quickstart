@@ -10,6 +10,7 @@ import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -23,24 +24,36 @@ public class example3 extends OpMode {
     private PathChain builder;
     private Follower follower;
     private Telemetry telemetryA;
+    CRServo servo;
     @Override
     public void init() {
 
-
+        servo = hardwareMap.get(CRServo.class, "servo1");
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
-        follower.setStartingPose(new Pose(12.5, 85, Math.toRadians(0)).getAsPedroCoordinates());
+        follower.setStartingPose(new Pose(12.5, 85, Math.toRadians(0)).getAsFTCStandardCoordinates());
         // ^^ remember to set starting pose ^^
         path = new MattPath().GeneratedPath2();
-        follower.followPath(path, true);
+        follower.followPath(path, 0.3, true);
+
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
         telemetryA.update();
     }
-
+    public void start() {
+        //follower.startTeleopDrive();
+    }
     @Override
     public void loop() {
         follower.update();
         follower.telemetryDebug(telemetryA);
+        //follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, false);
+        if (gamepad1.a) {
+            servo.setPower(-1);
+        } else if (gamepad1.b) {
+            servo.setPower(1);
+        } else {
+            servo.setPower(0);
+        }
     }
     public class MattPath {
 
@@ -81,7 +94,7 @@ public class example3 extends OpMode {
                                     new Point(new Pose(12.5, 85, 0).getAsFTCStandardCoordinates()),
                                     new Point(new Pose(0.5, 60).getAsFTCStandardCoordinates()),
                                     new Point(new Pose(48.5, 60).getAsFTCStandardCoordinates()),
-                                    new Point(new Pose(35, 85).getAsFTCStandardCoordinates())
+                                    new Point(new Pose(35, 85, 90).getAsFTCStandardCoordinates())
                             )
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(90))
