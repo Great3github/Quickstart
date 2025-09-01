@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import static java.lang.Thread.sleep;
+
+import android.provider.Settings;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
@@ -9,9 +13,11 @@ import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.PathBuilder;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
+import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -22,9 +28,15 @@ import org.firstinspires.ftc.teamcode.pedroPathing.constants.LConstants;
 @Autonomous (name="Mattp2-1", group="Examples")
 public class example3 extends OpMode {
     PathChain path;
+    int pathnum = 1;
     SparkFunOTOS.Pose2D newpose = OTOSConstants.offset;
+    long time = System.currentTimeMillis();
+    boolean hasDoneServothing = false;
+    boolean var2 = false;
+    boolean path2started = false;
 //    HardwareMap hardwareMap;
     private PathChain builder;
+    private PathChain builder2;
     private Follower follower;
     private Telemetry telemetryA;
     CRServo servo;
@@ -33,10 +45,10 @@ public class example3 extends OpMode {
 
         servo = hardwareMap.get(CRServo.class, "servo1");
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
-        follower.setStartingPose(new Pose(12.5, 85, Math.toRadians(0)).getAsFTCStandardCoordinates());
+        follower.setStartingPose(new Pose(12, 60, Math.toRadians(180)).getAsFTCStandardCoordinates());
         // ^^ remember to set starting pose ^^
-        path = new MattPath().GeneratedPath3();
-        follower.followPath(path, 0.3, true);
+        //path = new MattPath().GeneratedPath3();
+        new MattPath().startNewPath(pathnum);
 
         telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetryA.addData("XValue", newpose.x);
@@ -51,18 +63,37 @@ public class example3 extends OpMode {
         follower.update();
         follower.telemetryDebug(telemetryA);
         //follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, false);
+        if (pathnum == 2 && !hasDoneServothing) {
 
-        if (!follower.isBusy()) {
-            servo.setPower(-1);
-
-        } else if (gamepad1.b && follower.atParametricEnd()) {
-            servo.setPower(1);
-        } else {
-            servo.setPower(0);
+            if (System.currentTimeMillis() >= time + 2000) {
+                servo.setPower(0);
+                hasDoneServothing = true;
+            }
         }
+        if (!follower.isBusy() && !path2started) {
+            pathnum +=1;
+            new MattPath().startNewPath(pathnum);
+            path2started = true;
+            if (!var2) {time = System.currentTimeMillis(); var2= true;}
+            servo.setPower(-1);
+        } //else if (!follower.isBusy() && !path2started)
     }
     public class MattPath {
+        public void startNewPath(int pathnum) {
+            if (pathnum == 1) {
+                follower.followPath(new MattPath().GeneratedPath4(), 0.3, true);
+            } else if (pathnum == 2) {
 
+
+                follower.followPath(new MattPath().GeneratedPath4_2(), 0.3, true);
+
+
+
+            } else if (pathnum == 3) {
+                servo.setPower(0);
+
+            }
+        }
         public PathChain followerPath() {
 //            PathBuilder builder = new PathBuilder();
             builder = follower.pathBuilder()
@@ -151,6 +182,36 @@ public class example3 extends OpMode {
                     .build();
             return builder;
         }
+        public PathChain GeneratedPath4() {
+            builder = follower.pathBuilder()
 
+
+                    .addPath(
+                            // Line 1
+                            new BezierCurve(
+                                    new Point(new Pose(12.000, 60.000, 180).getAsFTCStandardCoordinates()),
+                                    new Point(new Pose(12.000, 85.000, 180).getAsFTCStandardCoordinates()),
+                                    new Point(new Pose(36.000, 83.500, 180).getAsFTCStandardCoordinates())
+                            )
+                    )
+                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .build();
+
+            return builder;
+        }
+        public PathChain GeneratedPath4_2() {
+            return follower.pathBuilder()
+                    .addPath(
+                            // Line 2
+                            new BezierCurve(
+                                    new Point(new Pose(36.000, 83.500, 180).getAsFTCStandardCoordinates()),
+                                    new Point(new Pose(12.000, 85.000, 180).getAsFTCStandardCoordinates()),
+                                    new Point(new Pose(12.000, 107.500, 180).getAsFTCStandardCoordinates())
+                            )
+                    )
+                    .setConstantHeadingInterpolation(Math.toRadians(90))
+                    .build();
+
+        }
     }
 }
